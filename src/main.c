@@ -46,6 +46,10 @@ void onsignal(i32 sig)
 {
 	switch (sig)
 	{
+	case SIGWINCH:
+		renderer_resize();
+		return;
+
 	case SIGSEGV:
 	case SIGILL:
 	case SIGFPE:
@@ -53,8 +57,11 @@ void onsignal(i32 sig)
 	case SIGHUP:
 	case SIGSYS:
 		deadly_signal(sig);
+		return;
+
 	case SIGINT:
 		quit(QUIT_REASON_SIGNAL, 1, &sig);
+		return;
 	}
 }
 
@@ -89,8 +96,12 @@ void __NORETURN__ quit(QuitReason reason, i32 code, void *data)
 i32 main(void)
 {
 	u8 c;
+	i32 n = 1;
+	struct Screen *screen;
 
 	init();
+
+	screen = renderer_get_screen();
 
 	while (1)
 	{
@@ -101,17 +112,13 @@ i32 main(void)
 
 		renderer_clear();
 
-		for (i32 y = 0; y < HEIGHT; y++)
-		{
-			for (i32 x = 0; x < WIDTH; x++)
-			{
-				renderer_pixelat(x, y, ((i32[]) { COLOR_RED, COLOR_GREEN, COLOR_BLUE })[y % 3]);
-			}
-		}
+		renderer_pixelat(n % screen->width, n % screen->height, 7);
 
 		renderer_draw();
 
-		usleep(MS_TO_US(100));
+		usleep(MS_TO_US(1000 / 60));
+
+		n++;
 	}
 
 	return 0;
