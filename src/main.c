@@ -112,11 +112,13 @@ i32 main(void)
 
 		renderer_clear();
 
-		renderer_pixelat(n % screen->width, n % screen->height, 7);
+		for (int i = 0; i < screen->height; i++) {
+			for (int j = 0; j < screen->width; j++) {
+				renderer_pixelat(j, i, 1 + ((n + i * j) % 7));
+			}
+		}
 
-		renderer_draw();
-
-		usleep(MS_TO_US(1000 / 60));
+		renderer_swap();
 
 		n++;
 	}

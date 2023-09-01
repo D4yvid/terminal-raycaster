@@ -20,7 +20,8 @@
 
 struct Screen {
 	i32 width, height;
-	u8 *buffer;
+	u8 *currentBuffer;
+	u8 *backBuffer, *frontBuffer;
 };
 
 void renderer_init(void);
@@ -31,9 +32,10 @@ void renderer_get_size(i32 *width, i32 *height);
 void renderer_resize(void);
 
 void renderer_clear(void);
+
 void renderer_pixelat(i32 x, i32 y, u8 color);
 
-void renderer_draw(void);
+void renderer_swap(void);
 
 void renderer_destroy(void);
 
